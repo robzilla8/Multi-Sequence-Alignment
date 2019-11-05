@@ -219,7 +219,6 @@ public class NeedlemanMatrix {
 				System.exit(1);
 			}
 		}
-		System.out.println();
 		int tCounter = 0;
 		// System.out.printf("String T:  ");
 		for (int i = 1; i < path.size(); i++) {

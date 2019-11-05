@@ -48,7 +48,7 @@ public class CenterStarDriver {
 			System.out.printf("	Result String 2 (s%d): %s%n", compareStrings.indexOf(resultMap.get(s)[1].replace("-","")) + 1, resultMap.get(s)[1]);
 			counter++;
 		}
-		
+
 		// get the sum of the scores and min index
 		String minScoringString = "";
 		int minScore = Integer.MAX_VALUE;
@@ -66,7 +66,7 @@ public class CenterStarDriver {
 			}
 			sumOfScores.put(s1, score);
 		}
-		
+
 		// Test print sum of scores
 		for (String s : compareStrings) {
 			System.out.printf("String: %s%n", s);
@@ -102,7 +102,7 @@ public class CenterStarDriver {
 					modifiedMin = resultMap.get(StringHashMagic(minScoringString, s))[1];
 					modifiedCompare.append(resultMap.get(StringHashMagic(minScoringString, s))[0]);
 				}
-				
+
 				// Check to see if the modified min has any gaps and record what index they are at
 				ArrayList<Integer> gapIndeces = new ArrayList<Integer>();
 				for (int i = 0; i < modifiedMin.length(); i++) {
@@ -112,32 +112,29 @@ public class CenterStarDriver {
 							minStringGapIndeces.add(i);
 							// add gaps to the other sequences too
 							for (StringBuffer sb : msa) {
-								// Count how many positions are before the gap
-								int offset = 0;
-								for (int j = 0; j < minStringGapIndeces.size(); j++) {
-									if (minStringGapIndeces.get(j) < i) {
-										offset++;
-									}
-								}
-								sb.insert(i + offset, '-');
+								sb.insert(i, '-');
 							}
 						}
 					}
 				}
-				
+
 				// Add gaps to modifiedCompare based on gaps that were added to modified min in previous trials
 				int offset = 0;
 				for (int gapsToAdd : minStringGapIndeces) {
 					// don't want to add gaps based on the current result of comparing center string to s
 					if (!gapIndeces.contains(gapsToAdd)) {
-						modifiedCompare.insert(gapsToAdd + offset, '-');
+						if (gapsToAdd + offset >= modifiedCompare.length() - 1) {
+							modifiedCompare.append('-');
+						} else {
+							modifiedCompare.insert(gapsToAdd + offset, '-');
+						}
 						offset++;
 					}
 				}
 				msa.add(modifiedCompare);
 			}
 		}
-		
+
 		// Handle the min string
 		int[] sortedMinStringGapIndeces = new int[minStringGapIndeces.size()];
 		for (int i = 0; i  < minStringGapIndeces.size(); i++) {
@@ -146,18 +143,26 @@ public class CenterStarDriver {
 		Arrays.sort(sortedMinStringGapIndeces);
 		int offset = 0;
 		for (int gap : sortedMinStringGapIndeces) {
-			minSequenceAlignment.insert(gap + offset, '-');
+			if (gap + offset >= minSequenceAlignment.length() - 1) {
+				minSequenceAlignment.append('-');
+			} else {
+				minSequenceAlignment.insert(gap + offset, '-');
+			}
 			offset++;
 		}
 		msa.add(minSequenceAlignment);
-		
-		// Can we print shit? Will it work? Find out next time on Dragon Ball Z!
+
+		// Can we print? Will it work? Find out next time on Dragon Ball Z!
 		for (StringBuffer sb : msa) {
-			System.out.printf("s(%d): %s%n",compareStrings.indexOf(sb.toString().replace("-", "")) + 1, sb.toString());
+			StringBuffer indexString = new StringBuffer(String.format("s(%d):", compareStrings.indexOf(sb.toString().replace("-", "")) + 1));
+			while (indexString.length() < 8) {
+				indexString.append(' ');
+			}
+			System.out.printf("%s%s | Length: %d%n",indexString.toString(), sb.toString(), sb.toString().length());
 		}
-		
+		// Next time on Dragonball Z...It works!
 	}
-	
+
 	/**
 	 * Check to see if a sequence is the same as another sequence with gaps in it
 	 * @param original the original sequence to check
